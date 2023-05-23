@@ -7,42 +7,67 @@ const bcrypt = require('bcrypt');
 const base64 = require('base-64');
 const { Sequelize, DataTypes } = require('sequelize');
 
+
+const PORT = process.env.PORT || 3002;
 // Prepare the express app
 const app = express();
-
 // Process JSON input and put the data on req.body
 app.use(express.json());
 
-const sequelize = new Sequelize(process.env.DATABASE_URL);
-
-// Process FORM intput and put the data on req.body
+// allows us to accept webform data AKA Process FORM intput and put the data on req.body
 app.use(express.urlencoded({ extended: true }));
+
+//setup database url
+const DATABASE_URL = process.env.NODE_ENV === 'test' ? 'sqlite::memory:' : process.env.DATABASE_URL;
+
+// db singleton
+const sequelize = new Sequelize(process.env.DATABASE_URL);
 
 // Create a Sequelize model
 const Users = sequelize.define('User', {
+  // the big diff: notice there is no return - look back at last weeks code if needed
   username: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
   },
   password: {
     type: DataTypes.STRING,
     allowNull: false,
-  }
+  },
+});
+
+// hey, this middleware exists! I can interact with the user before creating the record in our DB
+Users.beforeCreate((user) => {
+  console.log('our user before being added to DB', user);
 });
 
 // Signup Route -- create a new user
 // Two ways to test this route with httpie
 // echo '{"username":"john","password":"foo"}' | http post :3000/signup
 // http post :3000/signup username=john password=foo
+
+// TODO: the below code came with the starter code, commented out to test server connecition
 app.post('/signup', async (req, res) => {
 
   try {
     req.body.password = await bcrypt.hash(req.body.password, 10);
     const record = await Users.create(req.body);
     res.status(200).json(record);
-  } catch (e) { res.status(403).send('Error Creating User'); }
+  } catch (err) { res.status(403).send('Error Creating User'); }
 });
 
+//great for proof of life
+// app.post('/signup', async (req, res) => {
+//   res.status(200).send('this route works');
+// });
+
+sequelize.sync()
+  .then(() => {
+    console.log('Successful DB connection');
+    app.listen(PORT, () => console.log('listening on port: ', PORT));
+  })
+  .catch((err) => console.error(err));
 
 // Signin Route -- login with username and password
 // test with httpie
@@ -91,3 +116,6 @@ sequelize.sync()
   }).catch(e => {
     console.error('Could not start server', e.message);
   });
+
+
+// TODO: extract server logic to (1) Connect to the database and (2) Require the ‘server’ and start it
