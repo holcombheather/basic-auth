@@ -1,44 +1,61 @@
-# package.json Notes
+# LAB - Class 06
 
-## For React Applications
+## Project: Basic Auth
 
-To deploy your application at GitHub pages, you'll need to add a home page property to your package.json which points to the deployed base URL of your GitHub Pages site.
+### Author: Heather Holcomb | 401d53
 
-*NOTE: This will break deployments to other hosting services such as Netlify, Vercel, or AWS Amplify, so if you later wish to deploy there, remove this property completely.*
+### Problem Domain
 
-```json
-{
-  "homepage": "https://yourname.github.io/repository-name"
-}
-```
+An Express/Node.js based server using a custom “authentication” module that is designed to handle user registration and sign in using Basic, Bearer, or OAuth along with a custom “authorization” module that will grant/deny users access to the server based on their role or permissions level.
 
-## Node / Express Applications
+### Links and Resources
 
-### For Tests
+- [GitHub Actions ci/cd](https://github.com/holcombheather/basic-auth/actions)
+- [back-end server url](https://basic-auth-sw7m.onrender.com)
 
-Your scripts section should have the following, so that you can easily run tests locally and in your CI.
+### Collaborators
 
-```json
-  "scripts": {
-    "start": "node index.js",
-    "lint": "eslint **/*.js",
-    "test": "jest --verbose --coverage",
-    "test-watch": "jest --watchAll --verbose --coverage",
-    "init:config": "sequelize init:config",
-    "db:create": "sequelize db:create"
-},
-```
+- Referenced class demo code taught by Ryan Gallaway
 
-### For NPM Modules
+### Setup
 
-If you are creating a module to deploy at NPM, you'll want a "bin" section that identifies the name of the global command to run and your .js file that runs when called.
+#### `.env` requirements (where applicable)
 
-```json
-"bin": {
-    "fetch": "index.js"
-}
-```
+PORT
+DATABASE_URL
 
-Additionally, that file should have as it's first line, so that it'll run without having to type "node filename.js" every time
 
-`#!/usr/bin/env node`
+#### How to initialize/run your application (where applicable)
+
+- `npm install`
+
+#### How to use your library (where applicable)
+
+#### Features / Routes
+
+- Users can create an account, associated with a “role”
+- User Roles will be pre-defined and will each have a list of allowed capabilities
+    - `admin` can read, create, update, delete
+    - `editor` can read, create, update
+    - `writer` can read, create
+    - `user` can read
+- Users can then login with a valid username and password
+- Alternatively, users can login using an OAuth provider such as Google or GitHub
+    - In this case, users should be automatically assigned the role of user
+- Once logged in, Users can then access any route on the server, so long as they are permitted by the capabilities that match their role.
+    - For example, a route that deletes records should only work if your user role is “admin”
+
+#### Tests
+
+- `npm test`
+- POST to /signup to create a new user.
+- POST to /signin to login as a user (use basic auth).
+- Need tests for auth middleware and the routes.
+    - Does the middleware function (send it a basic header).
+    - Do the routes assert the requirements (signup/signin).
+- This is going to require more “end to end” testing than you’ve done in the past.
+    - To test signin, your tests actually need to create a user first, then try and login. i.e. The signin test will rely on the success of the signup test.
+
+#### UML
+
+![UML for Class 06](UML_class06.png)
