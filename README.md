@@ -68,11 +68,30 @@ Lab 06 Requirements
 - `npm test`
 - POST to /signup to create a new user.
 - POST to /signin to login as a user (use basic auth).
-- Need tests for auth middleware and the routes.
-    - Does the middleware function (send it a basic header).
-    - Do the routes assert the requirements (signup/signin).
-- This is going to require more “end to end” testing than you’ve done in the past.
-    - To test signin, your tests actually need to create a user first, then try and login. i.e. The signin test will rely on the success of the signup test.
+
+ PASS  src/auth/middleware/basic/basic.test.js
+  Auth Routes
+    ✓ allow for user signup (76 ms)
+    ✓ allow for user signin (3 ms)
+
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   88.57 |       50 |      60 |   93.75 |
+ src               |      80 |      100 |       0 |     100 |
+  server.js        |      80 |      100 |       0 |     100 |
+ src/auth          |   88.23 |      100 |     100 |   88.23 |
+  router.js        |   88.23 |      100 |     100 |   88.23 | 19,31
+ ...uth/middleware |       0 |        0 |       0 |       0 |
+  basic.js         |       0 |        0 |       0 |       0 |
+ src/auth/models   |     100 |       50 |     100 |     100 |
+  index.js         |     100 |       50 |     100 |     100 | 7
+  user.js          |     100 |      100 |     100 |     100 |
+-------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        0.735 s, estimated 1 s
 
 #### UML
 
